@@ -1,12 +1,11 @@
 import { Todo } from './todo';
+import { projectList, createProject } from './appLogic';
 
-const testTodo = new Todo("Fix the Console Bug");
+const workProject = createProject("Work");
 
-// 1. Log a 'Snapshot' of the initial state
-console.log("1. Initial:", JSON.parse(JSON.stringify(testTodo)));
+const task1 = new Todo("Finish Project Logic", "Coding", "2026-03-10", "High");
 
-testTodo.toggleComplete();
-testTodo.addSubTask("Deep dive into JS references");
+workProject.addTodo(task1);
 
-// 2. Log a 'Snapshot' of the updated state
-console.log("2. Updated:", JSON.parse(JSON.stringify(testTodo)));
+console.log("All Projects:", projectList);
+console.log("Work Todos:", workProject.getTodos());
