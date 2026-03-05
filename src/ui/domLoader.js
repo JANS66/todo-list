@@ -1,31 +1,48 @@
-import './styles.css';
+import { AppState } from '../logic/manager';
 
 export const UI = {
-    render(projects) {
+    render() {
         const root = document.querySelector('#content');
         root.innerHTML = '';
 
-        projects.forEach((project) => {
+        AppState.projects.forEach((project, pIndex) => {
             const projectDiv = document.createElement('div');
-            projectDiv.className = 'project-container';
+            projectDiv.className = 'project-card';
+            projectDiv.innerHTML = `<h2>${project.name}</h2>`;
 
-            const projectHeader = document.createElement('h2');
-            projectHeader.textContent = `Project: ${project.name}`;
-            projectDiv.appendChild(projectHeader);
-
-            const todoList = document.createElement('ul');
+            const todoList = document.createElement('div');
 
             project.todos.forEach((todo) => {
-                const todoItem = document.createElement('li');
-                todoItem.className = `todo-item ${todo.priority.toLowerCase()}`
+                const todoCard = document.createElement('div');
+                todoCard.className = `todo-card priority-${todo.priority.toLowerCase()}`;
+                todoCard.id = `todo=${todo.id}`;
 
-                todoItem.innerHTML = `
-                    <strong>${todo.title}</strong> - ${todo.dueDate}
-                    <p>${todo.description}</p>
-                    <span>Priority: ${todo.priority}</span>
+                todoCard.innerHTML = `
+                    <div class="todo-summary">
+                        <span class="title">${todo.title}</span>
+                        <span class="date">${todo.dueDate}</span>
+                        <button class="expand-btn">Details</button>
+                        <button class="delete-btn" data-p="${pIndex}" data-t=${todo.id}">Delete</button>
+                    </div>
+                    <div class="todo-details hidden">
+                        <p><strong>Description:</strong>${todo.description}</p>
+                        <p><strong>Notes:</strong>${todo.notes}</p>
+                        <button class="edit-btn">Edit (Not Implemented)</button>
+                    </div>
                 `;
 
-                todoList.appendChild(todoItem);
+                todoCard.querySelector('.expand-btn').onclick = () => {
+                    todoCard.querySelector('.todo-details').classList.toggle('hidden');
+                };
+
+                todoCard.querySelector('.delete-btn').onclick = (e) => {
+                    const pIdx = e.target.dataset.p;
+                    const tId = e.target.dataset.t;
+                    AppState.projects[pIdx].removeTodo(parseInt(tId));
+                    this.render();
+                };
+
+                todoList.appendChild(todoCard);
             });
 
             projectDiv.appendChild(todoList);

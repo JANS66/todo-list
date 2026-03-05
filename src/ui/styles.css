@@ -1,0 +1,28 @@
+.hidden {
+    display: none;
+}
+
+.todo-card {
+    border-left: 10px solid gray;
+    margin: 10px;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+.priority-high {
+    border-left-color: #ff4d4d;
+}
+
+.priority-medium {
+    border-left-color: #ffcc00;
+}
+
+.priority-low {
+    border-left-color: #4CAF50;
+}
+
+.todo-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
