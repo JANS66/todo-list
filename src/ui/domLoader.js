@@ -21,7 +21,8 @@ export const UI = {
             const priority = document.querySelector('#form-priority').value;
 
             const newTodo = new Todo(title, desc, date, priority);
-            AppState.projects[0].addTodo(newTodo);
+
+            AppState.addTodoToProject(0, newTodo);
 
             form.reset();
             modal.close();
@@ -54,7 +55,7 @@ export const UI = {
             `;
 
             card.querySelector('.del-btn').onclick = () => {
-                project.removeTodo(todo.id);
+                AppState.deleteTodoFromProject(0, todo.id);
                 this.render();
             };
 
