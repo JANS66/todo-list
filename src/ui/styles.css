@@ -70,3 +70,15 @@ form {
     flex-direction: column;
     gap: 10px;
 }
+
+.completed {
+    text-decoration: line-through;
+    color: gray;
+    opacity: 0.6;
+}
+
+#project-list button.active {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}

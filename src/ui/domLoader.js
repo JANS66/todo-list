@@ -8,6 +8,15 @@ export const UI = {
         const openBtn = document.querySelector('#open-modal-btn');
         const closeBtn = document.querySelector('#close-modal');
         const form = document.querySelector('#todo-form');
+        const projectBtn = document.querySelector('#add-project-btn');
+
+        projectBtn.onclick = () => {
+            const name = prompt("Enter Project Name:");
+            if (name) {
+                AppState.addProject(name);
+                this.render();
+            }
+        };
 
         openBtn.addEventListener('click', () => modal.showModal());
         closeBtn.addEventListener('click', () => modal.close());
@@ -21,8 +30,7 @@ export const UI = {
             const priority = document.querySelector('#form-priority').value;
 
             const newTodo = new Todo(title, desc, date, priority);
-
-            AppState.addTodoToProject(0, newTodo);
+            AppState.addTodoToProject(AppState.activeProjectIndex, newTodo);
 
             form.reset();
             modal.close();
@@ -31,31 +39,63 @@ export const UI = {
     },
 
     render() {
+        this.renderSidebar();
+        this.renderTodos();
+    },
+
+    renderSidebar() {
+        const list = document.querySelector('#project-list');
+        list.innerHTML = '';
+
+        AppState.projects.forEach((proj, index) => {
+            const btn = document.createElement('button');
+            btn.textContent = proj.name;
+            btn.className = index === AppState.activeProjectIndex ? 'active' : '';
+            btn.onclick = () => {
+                AppState.activeProjectIndex = index;
+                this.render();
+            };
+            list.appendChild(btn);
+        });
+    },
+
+    renderTodos() {
         const container = document.querySelector('#todo-container');
+        const title = document.querySelector('#current-project-title');
+        const project = AppState.projects[AppState.activeProjectIndex];
+
+        title.textContent = project.name;
         container.innerHTML = '';
 
-        const project = AppState.projects[0];
-
-        project.todos.forEach((todo, index) => {
+        project.todos.forEach((todo) => {
             let dateDisplay = todo.dueDate;
+
             if (todo.dueDate) {
-                const dateObj = parseISO(todo.dueDate);
-                dateDisplay = isToday(dateObj) ? 'Today' : format(dateObj, 'MMM do');
+                try {
+                    const dateObj = parseISO(todo.dueDate);
+                    dateDisplay = isToday(dateObj) ? 'Today' : format(dateObj, 'MMM do');
+                } catch (e) {
+                    dateDisplay = todo.dueDate;
+                }
             }
 
             const card = document.createElement('div');
             card.className = `todo-card priority-${todo.priority.toLowerCase()}`;
+
             card.innerHTML = `
-                <div class="todo-main">
-                    <input type="checkbox" ${todo.completed ? 'checked' : ''}>
-                    <span class="title">${todo.title}</span>
-                    <span class="date">${dateDisplay}</span>
-                    <button class="del-btn" data-index="${index}">X</button>
-                </div>
+                <input type="checkbox" class="status-check" ${todo.isComplete ? 'checked' : ''}>
+                <span class="${todo.isComplete ? 'completed' : ''}">${todo.title}</span>
+                <span class="todo-date">${dateDisplay}</span>
+                <button class="del-btn">x</button>
             `;
 
+            card.querySelector('.status-check').onchange = () => {
+                AppState.toggleTodoStatus(AppState.activeProjectIndex, todo.id);
+                this.render();
+            };
+
             card.querySelector('.del-btn').onclick = () => {
-                AppState.deleteTodoFromProject(0, todo.id);
+                AppState.deleteTodoFromProject(AppState.activeProjectIndex, todo.id);
                 this.render();
             };
 

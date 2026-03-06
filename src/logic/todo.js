@@ -11,7 +11,7 @@ export class Todo {
     }
 
     toggleComplete() {
-        this.complete = !this.complete;
+        this.isComplete = !this.isComplete;
     }
 
     addSubTask(taskName) {

@@ -3,6 +3,22 @@ import { Todo } from './todo';
 
 export const AppState = {
     projects: [],
+    activeProjectIndex: 0,
+
+    toggleTodoStatus(pIndex, todoId) {
+        const project = this.projects[pIndex];
+        const todo = project.todos.find(t => t.id === todoId);
+        if (todo) {
+            todo.toggleComplete();
+            this.saveData();
+        }
+    },
+
+    addProject(name) {
+        const newProject = new Project(name);
+        this.projects.push(newProject);
+        this.saveData();
+    },
 
     saveData() {
         localStorage.setItem('todoListData', JSON.stringify(this.projects));
