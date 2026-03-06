@@ -1,5 +1,6 @@
 import { AppState } from '../logic/manager';
 import { Todo } from '../logic/todo';
+import { format, parseISO, isToday } from 'date-fns';
 
 export const UI = {
     init() {
@@ -35,13 +36,19 @@ export const UI = {
         const project = AppState.projects[0];
 
         project.todos.forEach((todo, index) => {
+            let dateDisplay = todo.dueDate;
+            if (todo.dueDate) {
+                const dateObj = parseISO(todo.dueDate);
+                dateDisplay = isToday(dateObj) ? 'Today' : format(dateObj, 'MMM do');
+            }
+
             const card = document.createElement('div');
             card.className = `todo-card priority-${todo.priority.toLowerCase()}`;
             card.innerHTML = `
                 <div class="todo-main">
                     <input type="checkbox" ${todo.completed ? 'checked' : ''}>
                     <span class="title">${todo.title}</span>
-                    <span class="date">${todo.dueDate}</span>
+                    <span class="date">${dateDisplay}</span>
                     <button class="del-btn" data-index="${index}">X</button>
                 </div>
             `;
