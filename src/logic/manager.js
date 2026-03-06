@@ -54,5 +54,20 @@ export const AppState = {
     deleteTodoFromProject(pIndex, todoId) {
         this.projects[pIndex].removeTodo(todoId);
         this.saveData();
+    },
+
+    deleteProject(index) {
+        if (this.projects.length <= 1) {
+            alert("You must have at least one project!");
+            return;
+        }
+
+        this.projects.splice(index, 1);
+
+        if (this.activeProjectIndex >= this.projects.length) {
+            this.activeProjectIndex = this.projects.length - 1;
+        }
+
+        this.saveData();
     }
 };

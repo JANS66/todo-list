@@ -48,6 +48,9 @@ export const UI = {
         list.innerHTML = '';
 
         AppState.projects.forEach((proj, index) => {
+            const container = document.createElement('button');
+            container.className = 'project-item-container';
+
             const btn = document.createElement('button');
             btn.textContent = proj.name;
             btn.className = index === AppState.activeProjectIndex ? 'active' : '';
@@ -55,7 +58,21 @@ export const UI = {
                 AppState.activeProjectIndex = index;
                 this.render();
             };
-            list.appendChild(btn);
+
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'x';
+            delBtn.className = 'delete-project-btn';
+            delBtn.onclick = (e) => {
+                e.stopPropagation(); // Prevents clicking the project while trying to delete it
+                if (confirm(`Delete project "${proj.name}" and all its tasks?`)) {
+                    AppState.deleteProject(index);
+                    this.render();
+                }
+            };
+
+            container.appendChild(btn);
+            container.appendChild(delBtn);
+            list.appendChild(container);
         });
     },
 
