@@ -4,11 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Minimalist Todo</title>
 </head>
 
 <body>
-    <div id="content"></div>
+    <div id="app-container">
+        <aside id="sidebar">
+            <h2>Projects</h2>
+            <div id="project-list"></div>
+            <button id="add-project-btn">+ New Project</button>
+        </aside>
+
+        <main id="main-content">
+            <header>
+                <h1 id="current-project-title">General</h1>
+                <button id="open-modal-btn">Add Task</button>
+            </header>
+            <div id="todo-container"></div>
+        </main>
+    </div>
+
+    <dialog id="todo-modal">
+        <form id="todo-form" method="dialog">
+            <h3>Add New Task</h3>
+            <input type="text" id="form-title" placeholder="What needs to be done?" required>
+            <textarea id="form-desc" placeholder="Description"></textarea>
+            <div class="form-row">
+                <input type="date" id="form-date">
+                <select id="form-priority">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="close-modal">Cancel</button>
+                <button type="submit" id="submit-todo">Add Task</button>
+            </div>
+        </form>
+    </dialog>
 </body>
 
 </html>

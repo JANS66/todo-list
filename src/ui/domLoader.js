@@ -1,52 +1,57 @@
 import { AppState } from '../logic/manager';
+import { Todo } from '../logic/todo';
 
 export const UI = {
+    init() {
+        const modal = document.querySelector('#todo-modal');
+        const openBtn = document.querySelector('#open-modal-btn');
+        const closeBtn = document.querySelector('#close-modal');
+        const form = document.querySelector('#todo-form');
+
+        openBtn.addEventListener('click', () => modal.showModal());
+        closeBtn.addEventListener('click', () => modal.close());
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = document.querySelector('#form-title').value;
+            const desc = document.querySelector('#form-desc').value;
+            const date = document.querySelector('#form-date').value;
+            const priority = document.querySelector('#form-priority').value;
+
+            const newTodo = new Todo(title, desc, date, priority);
+            AppState.projects[0].addTodo(newTodo);
+
+            form.reset();
+            modal.close();
+            this.render();
+        });
+    },
+
     render() {
-        const root = document.querySelector('#content');
-        root.innerHTML = '';
+        const container = document.querySelector('#todo-container');
+        container.innerHTML = '';
 
-        AppState.projects.forEach((project, pIndex) => {
-            const projectDiv = document.createElement('div');
-            projectDiv.className = 'project-card';
-            projectDiv.innerHTML = `<h2>${project.name}</h2>`;
+        const project = AppState.projects[0];
 
-            const todoList = document.createElement('div');
+        project.todos.forEach((todo, index) => {
+            const card = document.createElement('div');
+            card.className = `todo-card priority-${todo.priority.toLowerCase()}`;
+            card.innerHTML = `
+                <div class="todo-main">
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+                    <span class="title">${todo.title}</span>
+                    <span class="date">${todo.dueDate}</span>
+                    <button class="del-btn" data-index="${index}">X</button>
+                </div>
+            `;
 
-            project.todos.forEach((todo) => {
-                const todoCard = document.createElement('div');
-                todoCard.className = `todo-card priority-${todo.priority.toLowerCase()}`;
-                todoCard.id = `todo=${todo.id}`;
+            card.querySelector('.del-btn').onclick = () => {
+                project.removeTodo(todo.id);
+                this.render();
+            };
 
-                todoCard.innerHTML = `
-                    <div class="todo-summary">
-                        <span class="title">${todo.title}</span>
-                        <span class="date">${todo.dueDate}</span>
-                        <button class="expand-btn">Details</button>
-                        <button class="delete-btn" data-p="${pIndex}" data-t=${todo.id}">Delete</button>
-                    </div>
-                    <div class="todo-details hidden">
-                        <p><strong>Description:</strong>${todo.description}</p>
-                        <p><strong>Notes:</strong>${todo.notes}</p>
-                        <button class="edit-btn">Edit (Not Implemented)</button>
-                    </div>
-                `;
-
-                todoCard.querySelector('.expand-btn').onclick = () => {
-                    todoCard.querySelector('.todo-details').classList.toggle('hidden');
-                };
-
-                todoCard.querySelector('.delete-btn').onclick = (e) => {
-                    const pIdx = e.target.dataset.p;
-                    const tId = e.target.dataset.t;
-                    AppState.projects[pIdx].removeTodo(parseInt(tId));
-                    this.render();
-                };
-
-                todoList.appendChild(todoCard);
-            });
-
-            projectDiv.appendChild(todoList);
-            root.appendChild(projectDiv);
+            container.appendChild(card);
         });
     }
-}
+};
