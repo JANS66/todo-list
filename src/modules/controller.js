@@ -20,7 +20,7 @@ export const handleProjectCreation = name => {
     renderProjects(getProjects());
 }
 
-export const handleProjectSwitch = index => {
-    switchProject(index);
+export const handleProjectSwitch = id => {
+    switchProject(id);
     renderTodos(getCurrentProject());
 }

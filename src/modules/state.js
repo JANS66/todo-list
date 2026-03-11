@@ -12,4 +12,4 @@ export const initApp = () => {
 export const getCurrentProject = () => currentProject;
 export const addProject = project => projects.push(project);
 export const getProjects = () => projects;
-export const switchProject = index => currentProject = projects[index];
+export const switchProject = projectId => currentProject = projects.find(project => project.id === projectId);

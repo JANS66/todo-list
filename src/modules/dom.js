@@ -1,16 +1,15 @@
 export const renderProjects = projects => {
-
     const projectsList = document.querySelector('#projects-list');
     projectsList.innerHTML = '';
 
-    projects.forEach((project, index) => {
+    projects.forEach(project => {
         const li = document.createElement('li');
-
         const button = document.createElement('button');
+
         button.textContent = project.name;
         button.classList.add('project-button');
 
-        button.dataset.index = index;
+        button.dataset.id = project.id;
 
         li.appendChild(button);
         projectsList.appendChild(li);

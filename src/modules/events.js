@@ -29,8 +29,8 @@ export function setupEventListeners() {
         const clickedButton = event.target.closest('.project-button');
 
         if (clickedButton) {
-            const projectIndex = clickedButton.dataset.index;
-            handleProjectSwitch(projectIndex);
+            const projectId = clickedButton.dataset.id;
+            handleProjectSwitch(projectId);
         }
     })
 }
