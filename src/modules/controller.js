@@ -1,5 +1,5 @@
 import { renderProjects, renderTodos, fillTaskForm } from './dom';
-import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject, deleteProject } from './state';
+import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject, deleteProject, deleteTodo } from './state';
 
 export const handleTodoSubmission = formData => {
     const data = Object.fromEntries(formData.entries());
@@ -34,7 +34,7 @@ export const handleProjectCreation = formData => {
         return;
     }
 
-    const duplicate = getProjects().some(project => project.name.toLowerCase() === name.toLowerCase())
+    const duplicate = getProjects().some(project => project.name.toLowerCase() === title.toLowerCase())
     if (duplicate) {
         alert("A project with this name already exists!")
         return;
@@ -74,5 +74,10 @@ export const handleEditTodo = id => {
 export const handleProjectDelete = id => {
     deleteProject(id);
     renderProjects(getProjects());
+    renderTodos(getCurrentProject());
+}
+
+export const handleTodoDelete = id => {
+    deleteTodo(id);
     renderTodos(getCurrentProject());
 }

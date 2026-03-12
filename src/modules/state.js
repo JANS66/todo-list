@@ -37,13 +37,17 @@ export const createProject = data => {
     projects.push(newProject);
 }
 
-export const deleteProject = id => {
-    const index = projects.findIndex(project => project.id === id);
+export const deleteProject = todoId => {
+    const index = projects.findIndex(project => project.id === todoId);
 
     if (projects.length > 1 && index !== -1) {
-        if (currentProject.id === id) {
+        if (currentProject.id === todoId) {
             currentProject = projects[index === 0 ? 1 : 0];
         }
         projects.splice(index, 1);
     }
 };
+
+export const deleteTodo = todoId => {
+    currentProject.todos = currentProject.todos.filter(todo => todo.id !== todoId)
+}

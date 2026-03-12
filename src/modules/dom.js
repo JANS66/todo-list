@@ -39,6 +39,7 @@ export const renderTodos = project => {
                 <span class="todo-priority"></span>
                 <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
                 <button class="todo-edit">Edit</button>
+                <button class="todo-delete">x</button>
             </div>
         `;
 

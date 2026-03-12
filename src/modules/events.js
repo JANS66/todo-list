@@ -1,4 +1,4 @@
-import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle, handleEditTodo, handleProjectDelete } from "./controller";
+import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle, handleEditTodo, handleProjectDelete, handleTodoDelete } from "./controller";
 
 export function setupEventListeners() {
     const addNewTask = document.querySelector('#open-modal');
@@ -77,8 +77,14 @@ export function setupEventListeners() {
         const editButton = event.target.closest('.todo-edit');
 
         if (editButton) {
-            const todoId = editButton.closest('.todo-card').dataset.id;
-            handleEditTodo(todoId);
+            handleEditTodo(editButton.closest('.todo-card').dataset.id);
+            return;
+        }
+
+        const deleteButton = event.target.closest('.todo-delete')
+
+        if (deleteButton) {
+            handleTodoDelete(deleteButton.closest('.todo-card').dataset.id)
         }
     });
 }
