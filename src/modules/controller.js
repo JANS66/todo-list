@@ -1,6 +1,6 @@
 import { Todo } from '../models/todo'
 import { renderProjects, renderTodos } from './dom';
-import { getCurrentProject, addProject, getProjects, switchProject } from './state';
+import { getCurrentProject, addProject, getProjects, switchProject, toggleTodo } from './state';
 import { Project } from '../models/project';
 
 export const handleTodoSubmission = formData => {
@@ -22,5 +22,10 @@ export const handleProjectCreation = name => {
 
 export const handleProjectSwitch = id => {
     switchProject(id);
+    renderTodos(getCurrentProject());
+}
+
+export const handleTodoToggle = id => {
+    toggleTodo(id);
     renderTodos(getCurrentProject());
 }

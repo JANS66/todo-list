@@ -13,3 +13,9 @@ export const getCurrentProject = () => currentProject;
 export const addProject = project => projects.push(project);
 export const getProjects = () => projects;
 export const switchProject = projectId => currentProject = projects.find(project => project.id === projectId);
+
+export const toggleTodo = todoId => {
+    const todo = currentProject.todos.find(todo => todo.id === todoId);
+    todo.toggleComplete();
+    console.log(todo);
+}

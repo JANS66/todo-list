@@ -1,4 +1,4 @@
-import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch } from "./controller";
+import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle } from "./controller";
 
 export function setupEventListeners() {
     const dialog = document.querySelector('#task-dialog');
@@ -7,6 +7,7 @@ export function setupEventListeners() {
     const createProject = document.querySelector('#create-project')
     const taskForm = document.querySelector('form');
     const projectsList = document.querySelector('#projects-list');
+    const todoList = document.querySelector('#todo-list');
 
     addNewTask.addEventListener('click', () => dialog.showModal());
     cancelButton.addEventListener('click', () => dialog.close());
@@ -31,6 +32,15 @@ export function setupEventListeners() {
         if (clickedButton) {
             const projectId = clickedButton.dataset.id;
             handleProjectSwitch(projectId);
+        }
+    })
+
+    todoList.addEventListener('change', event => {
+        const toggledTodo = event.target.closest('.todo-card');
+
+        if (toggledTodo) {
+            const todoId = toggledTodo.dataset.id;
+            handleTodoToggle(todoId);
         }
     })
 }

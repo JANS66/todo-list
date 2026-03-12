@@ -32,8 +32,12 @@ export const renderTodos = project => {
                 <span class="todo-description"></span>
                 <span class="todo-dueDate"></span>
                 <span class="todo-priority"></span>
+                <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
             </div>
         `;
+
+        li.classList.add('todo-card');
+        li.dataset.id = todo.id;
 
         li.querySelector(".todo-title").textContent = todo.title;
         li.querySelector(".todo-description").textContent = todo.description;
