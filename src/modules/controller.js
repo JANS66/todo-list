@@ -1,83 +1,85 @@
-import { renderProjects, renderTodos, fillTaskForm } from './dom';
-import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject, deleteProject, deleteTodo } from './state';
+import * as DOM from './dom';
+import * as State from './state';
 
-export const handleTodoSubmission = formData => {
-    const data = Object.fromEntries(formData.entries());
+export const handleTodoSubmission = (formData) => {
+  const data = Object.fromEntries(formData.entries());
 
-    if (!data.title.trim()) {
-        alert("Task title is required!");
-        return;
+  if (!data.title.trim()) {
+    alert('Task title is required!');
+    return;
+  }
+
+  const editId = document.querySelector('#task-form').dataset.editId;
+
+  if (editId) {
+    const existingTodo = State.getTodoById(editId);
+    if (!existingTodo) {
+      console.error('Attempted to update a non-existent todo.');
+      return;
     }
+    State.updateTodo(editId, data);
+  } else {
+    State.createTodo(data);
+  }
 
-    const editId = document.querySelector('#task-form').dataset.editId;
-
-    if (editId) {
-        const existingTodo = getTodoById(editId);
-        if (!existingTodo) {
-            console.error("Attempted to update a non-existent todo.");
-            return;
-        }
-        updateTodo(editId, data);
-    } else {
-        createTodo(data);
-    }
-
-    renderTodos(getCurrentProject());
+  DOM.renderTodos(State.getCurrentProject());
 };
 
-export const handleProjectCreation = formData => {
-    const data = Object.fromEntries(formData.entries());
-    const title = data.title.trim();
+export const handleProjectCreation = (formData) => {
+  const data = Object.fromEntries(formData.entries());
+  const title = data.title.trim();
 
-    if (!title) {
-        alert("Project name cannot be empty!");
-        return;
-    }
+  if (!title) {
+    alert('Project name cannot be empty!');
+    return;
+  }
 
-    const duplicate = getProjects().some(project => project.name.toLowerCase() === title.toLowerCase())
-    if (duplicate) {
-        alert("A project with this name already exists!")
-        return;
-    }
+  const duplicate = State.getProjects().some(
+    (project) => project.name.toLowerCase() === title.toLowerCase()
+  );
+  if (duplicate) {
+    alert('A project with this name already exists!');
+    return;
+  }
 
-    createProject(data);
-    renderProjects(getProjects());
-}
+  State.createProject(data);
+  DOM.renderProjects(State.getProjects());
+};
 
-export const handleProjectSwitch = id => {
-    if (!id) return;
+export const handleProjectSwitch = (id) => {
+  if (!id) return;
 
-    switchProject(id);
-    renderTodos(getCurrentProject());
-}
+  State.switchProject(id);
+  DOM.renderTodos(State.getCurrentProject());
+};
 
-export const handleTodoToggle = id => {
-    if (!id) return;
+export const handleTodoToggle = (id) => {
+  if (!id) return;
 
-    toggleTodo(id);
-    renderTodos(getCurrentProject());
-}
+  State.toggleTodo(id);
+  DOM.renderTodos(State.getCurrentProject());
+};
 
-export const handleEditTodo = id => {
-    const todo = getTodoById(id);
+export const handleEditTodo = (id) => {
+  const todo = State.getTodoById(id);
 
-    if (!todo) {
-        alert("This task no longer exists.")
-        return;
-    }
+  if (!todo) {
+    alert('This task no longer exists.');
+    return;
+  }
 
-    fillTaskForm(todo);
+  DOM.fillTaskForm(todo);
 
-    document.querySelector('#task-dialog').showModal();
-}
+  document.querySelector('#task-dialog').showModal();
+};
 
-export const handleProjectDelete = id => {
-    deleteProject(id);
-    renderProjects(getProjects());
-    renderTodos(getCurrentProject());
-}
+export const handleProjectDelete = (id) => {
+  State.deleteProject(id);
+  DOM.renderProjects(State.getProjects());
+  DOM.renderTodos(State.getCurrentProject());
+};
 
-export const handleTodoDelete = id => {
-    deleteTodo(id);
-    renderTodos(getCurrentProject());
-}
+export const handleTodoDelete = (id) => {
+  State.deleteTodo(id);
+  DOM.renderTodos(State.getCurrentProject());
+};

@@ -1,10 +1,9 @@
 import './style.css';
-import { getCurrentProject, initApp } from './modules/state';
-import { renderProjects, renderTodos } from './modules/dom';
-import { getProjects } from './modules/state';
-import { setupEventListeners } from './modules/events';
+import * as State from './modules/state';
+import * as DOM from './modules/dom';
+import * as Events from './modules/events';
 
-setupEventListeners();
-initApp();
-renderProjects(getProjects());
-renderTodos(getCurrentProject());
+Events.setupEventListeners();
+State.initApp();
+DOM.renderProjects(State.getProjects());
+DOM.renderTodos(State.getCurrentProject());
