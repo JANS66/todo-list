@@ -36,3 +36,14 @@ export const createProject = data => {
     const newProject = new Project(data.title);
     projects.push(newProject);
 }
+
+export const deleteProject = id => {
+    const index = projects.findIndex(project => project.id === id);
+
+    if (projects.length > 1 && index !== -1) {
+        if (currentProject.id === id) {
+            currentProject = projects[index === 0 ? 1 : 0];
+        }
+        projects.splice(index, 1);
+    }
+};

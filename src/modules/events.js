@@ -1,4 +1,4 @@
-import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle, handleEditTodo } from "./controller";
+import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle, handleEditTodo, handleProjectDelete } from "./controller";
 
 export function setupEventListeners() {
     const addNewTask = document.querySelector('#open-modal');
@@ -49,11 +49,18 @@ export function setupEventListeners() {
     createProject.addEventListener('click', () => projectDialog.showModal())
 
     projectsList.addEventListener('click', event => {
-        const clickedButton = event.target.closest('.project-button');
+        const projectButton = event.target.closest('.project-button');
 
-        if (clickedButton) {
-            const projectId = clickedButton.dataset.id;
-            handleProjectSwitch(projectId);
+        if (projectButton) {
+            handleProjectSwitch(projectButton.dataset.id);
+        }
+
+        const deleteButton = event.target.closest('.delete-project-button');
+
+        if (deleteButton) {
+            if (confirm("Are you sure you want to delete this project?")) {
+                handleProjectDelete(deleteButton.dataset.id);
+            }
         }
     })
 

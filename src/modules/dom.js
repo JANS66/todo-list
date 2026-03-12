@@ -4,14 +4,19 @@ export const renderProjects = projects => {
 
     projects.forEach(project => {
         const li = document.createElement('li');
-        const button = document.createElement('button');
+        const projectButton = document.createElement('button');
+        const deleteButton = document.createElement('button');
 
-        button.textContent = project.name;
-        button.classList.add('project-button');
+        projectButton.textContent = project.name;
+        projectButton.classList.add('project-button');
+        deleteButton.textContent = 'x';
+        deleteButton.classList.add('delete-project-button')
 
-        button.dataset.id = project.id;
+        projectButton.dataset.id = project.id;
+        deleteButton.dataset.id = project.id;
 
-        li.appendChild(button);
+        li.appendChild(projectButton);
+        li.appendChild(deleteButton);
         projectsList.appendChild(li);
     })
 }

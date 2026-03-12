@@ -1,5 +1,5 @@
 import { renderProjects, renderTodos, fillTaskForm } from './dom';
-import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject } from './state';
+import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject, deleteProject } from './state';
 
 export const handleTodoSubmission = formData => {
     const data = Object.fromEntries(formData.entries());
@@ -69,4 +69,10 @@ export const handleEditTodo = id => {
     fillTaskForm(todo);
 
     document.querySelector('#task-dialog').showModal();
+}
+
+export const handleProjectDelete = id => {
+    deleteProject(id);
+    renderProjects(getProjects());
+    renderTodos(getCurrentProject());
 }
