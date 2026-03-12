@@ -18,3 +18,11 @@ export const toggleTodo = todoId => {
     const todo = currentProject.todos.find(todo => todo.id === todoId);
     todo.toggleComplete();
 }
+
+export const getTodoById = todoId => currentProject.todos.find(todo => todo.id === todoId);
+
+export const updateTodo = (todoId, newData) => {
+    const todo = getTodoById(todoId);
+
+    Object.assign(todo, newData);
+}

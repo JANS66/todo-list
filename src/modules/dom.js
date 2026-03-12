@@ -33,6 +33,7 @@ export const renderTodos = project => {
                 <span class="todo-dueDate"></span>
                 <span class="todo-priority"></span>
                 <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
+                <button class="todo-edit">Edit</button>
             </div>
         `;
 
@@ -46,4 +47,17 @@ export const renderTodos = project => {
 
         todoList.appendChild(li);
     });
+}
+
+export const fillTaskForm = todo => {
+    const form = document.querySelector('#task-form');
+    const title = form.querySelector('h2');
+
+    form.title.value = todo.title;
+    form.description.value = todo.description;
+    form.dueDate.value = todo.dueDate;
+    form.priority.value = todo.priority;
+
+    form.dataset.editId = todo.id;
+    title.textContent = "Edit Task";
 }

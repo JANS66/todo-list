@@ -1,4 +1,4 @@
-import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle } from "./controller";
+import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle, handleEditTodo } from "./controller";
 
 export function setupEventListeners() {
     const addNewTask = document.querySelector('#open-modal');
@@ -14,7 +14,12 @@ export function setupEventListeners() {
     const todoList = document.querySelector('#todo-list');
 
 
-    addNewTask.addEventListener('click', () => taskDialog.showModal());
+    addNewTask.addEventListener('click', () => {
+        taskForm.reset();
+        delete taskForm.dataset.editId;
+        taskDialog.querySelector('h2').textContent = 'New Task';
+        taskDialog.showModal();
+    });
 
     taskForm.addEventListener('submit', () => {
         const formData = new FormData(taskForm);
@@ -60,4 +65,13 @@ export function setupEventListeners() {
             handleTodoToggle(todoId);
         }
     })
+
+    todoList.addEventListener('click', event => {
+        const editButton = event.target.closest('.todo-edit');
+
+        if (editButton) {
+            const todoId = editButton.closest('.todo-card').dataset.id;
+            handleEditTodo(todoId);
+        }
+    });
 }
