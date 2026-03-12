@@ -1,4 +1,5 @@
 import { Project } from '../models/project';
+import { Todo } from '../models/todo';
 
 const projects = [];
 let currentProject = null;
@@ -10,7 +11,6 @@ export const initApp = () => {
 };
 
 export const getCurrentProject = () => currentProject;
-export const addProject = project => projects.push(project);
 export const getProjects = () => projects;
 export const switchProject = projectId => currentProject = projects.find(project => project.id === projectId);
 
@@ -25,4 +25,14 @@ export const updateTodo = (todoId, newData) => {
     const todo = getTodoById(todoId);
 
     Object.assign(todo, newData);
+}
+
+export const createTodo = data => {
+    const newTodo = new Todo(data.title, data.description, data.dueDate, data.priority);
+    currentProject.addTodo(newTodo);
+}
+
+export const createProject = data => {
+    const newProject = new Project(data.title);
+    projects.push(newProject);
 }

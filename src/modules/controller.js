@@ -1,7 +1,5 @@
-import { Todo } from '../models/todo'
 import { renderProjects, renderTodos, fillTaskForm } from './dom';
-import { getCurrentProject, addProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo } from './state';
-import { Project } from '../models/project';
+import { getCurrentProject, getProjects, switchProject, toggleTodo, getTodoById, updateTodo, createTodo, createProject } from './state';
 
 export const handleTodoSubmission = formData => {
     const data = Object.fromEntries(formData.entries());
@@ -10,8 +8,7 @@ export const handleTodoSubmission = formData => {
     if (editId) {
         updateTodo(editId, data);
     } else {
-        const newTodo = new Todo(data.title, data.description, data.dueDate, data.priority);
-        getCurrentProject().addTodo(newTodo);
+        createTodo(data);
     }
 
     renderTodos(getCurrentProject());
@@ -19,9 +16,7 @@ export const handleTodoSubmission = formData => {
 
 export const handleProjectCreation = formData => {
     const data = Object.fromEntries(formData.entries());
-    const newProject = new Project(data.title);
-
-    addProject(newProject);
+    createProject(data);
     renderProjects(getProjects());
 }
 
