@@ -13,9 +13,10 @@ export const handleTodoSubmission = formData => {
     renderTodos(getCurrentProject());
 };
 
-export const handleProjectCreation = name => {
-    if (!name) return;
-    const newProject = new Project(name);
+export const handleProjectCreation = formData => {
+    const data = Object.fromEntries(formData.entries());
+    const newProject = new Project(data.title);
+    
     addProject(newProject);
     renderProjects(getProjects());
 }

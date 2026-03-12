@@ -1,17 +1,20 @@
 import { handleTodoSubmission, handleProjectCreation, handleProjectSwitch, handleTodoToggle } from "./controller";
 
 export function setupEventListeners() {
-    const dialog = document.querySelector('#task-dialog');
     const addNewTask = document.querySelector('#open-modal');
-    const cancelButton = document.querySelector('#cancel-button');
     const createProject = document.querySelector('#create-project')
-    const taskForm = document.querySelector('form');
+
+    const taskForm = document.querySelector('#task-form');
+    const projectForm = document.querySelector('#project-form');
+    const taskDialog = document.querySelector('#task-dialog');
+    const projectDialog = document.querySelector('#project-dialog');
+    const dialogs = document.querySelectorAll('dialog');
+
     const projectsList = document.querySelector('#projects-list');
     const todoList = document.querySelector('#todo-list');
 
-    addNewTask.addEventListener('click', () => dialog.showModal());
-    cancelButton.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close() });
+
+    addNewTask.addEventListener('click', () => taskDialog.showModal());
 
     taskForm.addEventListener('submit', () => {
         const formData = new FormData(taskForm);
@@ -21,10 +24,24 @@ export function setupEventListeners() {
         taskForm.reset();
     });
 
-    createProject.addEventListener('click', () => {
-        const name = prompt('Enter new project name', '');
-        handleProjectCreation(name);
+    projectForm.addEventListener('submit', () => {
+        const formData = new FormData(projectForm);
+
+        handleProjectCreation(formData);
+
+        projectForm.reset();
     })
+
+    dialogs.forEach(dialog => {
+        dialog.addEventListener('click', event => {
+            // Close if clicking the backdrop or a button with id 'cancel-button'
+            if (event.target === dialog || event.target.id === 'cancel-button') {
+                dialog.close();
+            }
+        });
+    });
+
+    createProject.addEventListener('click', () => projectDialog.showModal())
 
     projectsList.addEventListener('click', event => {
         const clickedButton = event.target.closest('.project-button');

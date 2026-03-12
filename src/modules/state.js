@@ -17,5 +17,4 @@ export const switchProject = projectId => currentProject = projects.find(project
 export const toggleTodo = todoId => {
     const todo = currentProject.todos.find(todo => todo.id === todoId);
     todo.toggleComplete();
-    console.log(todo);
 }
