@@ -48,13 +48,14 @@ export const handleProjectCreation = (formData) => {
 
   State.createProject(data);
   DOM.closeDialog();
-  DOM.renderProjects(State.getProjects());
+  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
 };
 
 export const handleProjectSwitch = (id) => {
   if (!id) return;
 
   State.switchProject(id);
+  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
   DOM.renderTodos(State.getCurrentProject());
 };
 
@@ -93,6 +94,6 @@ export const handleProjectDelete = (id) => {
 
   // If successful, proceed as normal
   DOM.closeDialog();
-  DOM.renderProjects(State.getProjects());
+  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
   DOM.renderTodos(State.getCurrentProject());
 };

@@ -36,7 +36,7 @@ const createSelectField = (
   return label;
 };
 
-export const renderProjects = (projects) => {
+export const renderProjects = (projects, currentId) => {
   const projectsList = document.querySelector('#projects-list');
   projectsList.innerHTML = '';
 
@@ -44,6 +44,10 @@ export const renderProjects = (projects) => {
     const li = document.createElement('li');
     const projectButton = document.createElement('button');
     const deleteButton = document.createElement('button');
+
+    if (project.id === currentId) {
+      li.classList.add('active-project');
+    }
 
     projectButton.textContent = project.name;
     projectButton.classList.add('project-button');
@@ -61,7 +65,6 @@ export const renderProjects = (projects) => {
 
 export const renderTodos = (project) => {
   const projectName = document.querySelector('#project-name');
-
   projectName.textContent = project.name;
 
   const todoList = document.querySelector('#todo-list');
@@ -69,25 +72,31 @@ export const renderTodos = (project) => {
 
   project.todos.forEach((todo) => {
     const li = document.createElement('li');
-    li.innerHTML = `
-            <div>
-                <span class="todo-title"></span>
-                <span class="todo-description"></span>
-                <span class="todo-dueDate"></span>
-                <span class="todo-priority"></span>
-                <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
-                <button class="todo-edit">Edit</button>
-                <button class="todo-delete">x</button>
-            </div>
-        `;
-
     li.classList.add('todo-card');
     li.dataset.id = todo.id;
 
+    li.innerHTML = `
+      <div class="todo-header">
+        <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
+        <span class="todo-title"></span>
+        <span class="todo-dueDate">${todo.dueDate}</span>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="todo-details">
+        <div class="details-grid">
+          <div class="description-section">
+            <p class="todo-priority-badge ${todo.priority.toLowerCase()}">${todo.priority}</p>
+            <p class="todo-description"></p>
+          </div>
+          <div class="todo-actions">
+            <button class="todo-edit">Edit</button>
+            <button class="todo-delete">Delete</button>
+          </div>
+    `;
+
     li.querySelector('.todo-title').textContent = todo.title;
-    li.querySelector('.todo-description').textContent = todo.description;
-    li.querySelector('.todo-dueDate').textContent = todo.dueDate;
-    li.querySelector('.todo-priority').textContent = todo.priority;
+    li.querySelector('.todo-description').textContent =
+      todo.description || 'No description provided.';
 
     todoList.appendChild(li);
   });

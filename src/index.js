@@ -5,5 +5,5 @@ import * as Events from './modules/events';
 
 Events.setupEventListeners();
 State.initApp();
-DOM.renderProjects(State.getProjects());
+DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
 DOM.renderTodos(State.getCurrentProject());

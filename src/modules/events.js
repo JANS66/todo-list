@@ -2,6 +2,24 @@ import * as Controller from './controller';
 
 export function setupEventListeners() {
   const dialog = document.querySelector('#main-dialog');
+  const sidebar = document.querySelector('sidebar');
+  const menuToggle = document.querySelector('#menu-toggle');
+
+  // Toggle Sidebar
+  menuToggle?.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+  });
+
+  // Close sidebar when clicking outside of it
+  document.addEventListener('click', (e) => {
+    if (
+      sidebar.classList.contains('active') &&
+      !sidebar.contains(e.target) &&
+      e.target !== menuToggle
+    ) {
+      sidebar.classList.remove('active');
+    }
+  });
 
   // Open Project Creator
   document.querySelector('#create-project').addEventListener('click', () => {
@@ -44,10 +62,13 @@ export function setupEventListeners() {
     .querySelector('#projects-list')
     .addEventListener('click', (event) => {
       const projectButton = event.target.closest('.project-button');
-      const deleteButton = event.target.closest('.delete-project-button');
-
-      if (projectButton)
+      if (projectButton) {
         Controller.handleProjectSwitch(projectButton.dataset.id);
+
+        sidebar.classList.remove('active');
+      }
+
+      const deleteButton = event.target.closest('.delete-project-button');
       if (deleteButton)
         Controller.requestDialog('Delete Confirmation', {
           id: deleteButton.dataset.id,
@@ -61,22 +82,37 @@ export function setupEventListeners() {
     if (!todoCard) return; // Exit if we didn't click inside a card
 
     const id = todoCard.dataset.id;
+    const target = event.target;
 
     // 1. Handle Edit Button
-    if (event.target.classList.contains('todo-edit')) {
+    if (target.classList.contains('todo-edit')) {
       Controller.handleEditRequest(id);
       return;
     }
 
     // 2. Handle Delete Button
-    if (event.target.classList.contains('todo-delete')) {
+    if (target.classList.contains('todo-delete')) {
       Controller.handleTodoDelete(id);
       return;
     }
 
     // 3. Handle Checkbox Toggle
-    if (event.target.classList.contains('todo-complete')) {
+    if (target.classList.contains('todo-complete')) {
       Controller.handleTodoToggle(id);
+      return;
+    }
+
+    // 4. Handle Expansion (If we clicked the card but NOT a button/checkbox)
+    const isInteractive =
+      target.closest('.todo-actions') ||
+      target.classList.contains('todo-complete');
+
+    if (!isInteractive) {
+      todoCard.classList.toggle('expanded');
+
+      // Update the arrow icon
+      const icon = todoCard.querySelector('.expand-icon');
+      icon.textContent = todoCard.classList.contains('expanded') ? '▲' : '▼';
     }
   });
 }
