@@ -154,6 +154,7 @@ button {
   overflow: hidden; /* Keeps the expansion neat */
   transition: transform 0.2s ease;
   cursor: pointer;
+  will-change: transform;
 }
 
 .todo-card:hover {
@@ -183,21 +184,26 @@ button {
 .todo-details {
   max-height: 0; /* Hidden by default */
   overflow: hidden;
-  transition: max-height 0.3s ease-out;
   background-color: #fafafa;
   border-top: 0 solid var(--border);
+  padding: 0 1.25rem;
+  transition:
+    max-height 0.3s ease-out,
+    padding 0.3s ease-out,
+    border-width 0.3s ease;
+}
+
+.details-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
 }
 
 .todo-card.expanded .todo-details {
   max-height: 200px;
   padding: 1rem 1.25rem;
   border-top-width: 1px;
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
 }
 
 .todo-description {
@@ -208,7 +214,7 @@ button {
 
 .todo-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .todo-actions button {
@@ -264,6 +270,11 @@ button {
 .todo-priority-badge.low {
   background: #dcfce7;
   color: #22c55e;
+}
+
+.todo-priority-badge.medium {
+  background: #fef3c7;
+  color: #d97706;
 }
 
 /* Dialog & Form Styling */
