@@ -47,12 +47,20 @@ export const createProject = (data) => {
 export const deleteProject = (projectId) => {
   const index = projects.findIndex((project) => project.id === projectId);
 
-  if (projects.length > 1 && index !== -1) {
+  // Check if it's the last project
+  if (projects.length <= 1) {
+    return false; // Deletion failed: last project
+  }
+
+  if (index !== -1) {
     if (currentProject.id === projectId) {
       currentProject = projects[index === 0 ? 1 : 0];
     }
     projects.splice(index, 1);
+    return true; // Deletion successful
   }
+
+  return false;
 };
 
 export const deleteTodo = (todoId) => {

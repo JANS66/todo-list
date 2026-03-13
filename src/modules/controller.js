@@ -80,8 +80,18 @@ export const handleTodoDelete = (id) => {
 };
 
 export const handleProjectDelete = (id) => {
-  State.deleteProject(id);
+  const success = State.deleteProject(id);
 
+  if (!success) {
+    // If state returned false, we know it's the last project
+    DOM.renderDialog('Alert', {
+      message:
+        'Cannot delete the last project! You need at least one to stay organized.',
+    });
+    return;
+  }
+
+  // If successful, proceed as normal
   DOM.closeDialog();
   DOM.renderProjects(State.getProjects());
   DOM.renderTodos(State.getCurrentProject());
