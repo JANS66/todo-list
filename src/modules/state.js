@@ -40,15 +40,15 @@ export const createTodo = (data) => {
 };
 
 export const createProject = (data) => {
-  const newProject = new Project(data.title);
+  const newProject = new Project(data.name);
   projects.push(newProject);
 };
 
-export const deleteProject = (todoId) => {
-  const index = projects.findIndex((project) => project.id === todoId);
+export const deleteProject = (projectId) => {
+  const index = projects.findIndex((project) => project.id === projectId);
 
   if (projects.length > 1 && index !== -1) {
-    if (currentProject.id === todoId) {
+    if (currentProject.id === projectId) {
       currentProject = projects[index === 0 ? 1 : 0];
     }
     projects.splice(index, 1);

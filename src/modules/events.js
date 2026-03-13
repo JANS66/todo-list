@@ -1,91 +1,82 @@
 import * as Controller from './controller';
 
 export function setupEventListeners() {
-  const addNewTask = document.querySelector('#open-modal');
-  const createProject = document.querySelector('#create-project');
+  const dialog = document.querySelector('#main-dialog');
 
-  const taskForm = document.querySelector('#task-form');
-  const projectForm = document.querySelector('#project-form');
-  const taskDialog = document.querySelector('#task-dialog');
-  const projectDialog = document.querySelector('#project-dialog');
-  const dialogs = document.querySelectorAll('dialog');
-
-  const projectsList = document.querySelector('#projects-list');
-  const todoList = document.querySelector('#todo-list');
-
-  addNewTask.addEventListener('click', () => {
-    taskForm.reset();
-    delete taskForm.dataset.editId;
-    taskDialog.querySelector('h2').textContent = 'New Task';
-    taskDialog.showModal();
+  // Open Project Creator
+  document.querySelector('#create-project').addEventListener('click', () => {
+    Controller.requestDialog('Project');
   });
 
-  taskForm.addEventListener('submit', () => {
-    const formData = new FormData(taskForm);
-
-    Controller.handleTodoSubmission(formData);
-
-    taskForm.reset();
+  // Open Task Creator
+  document.querySelector('#add-todo').addEventListener('click', () => {
+    Controller.requestDialog('Task');
   });
 
-  projectForm.addEventListener('submit', () => {
-    const formData = new FormData(projectForm);
+  // Handle Form Submissions (Delegation)
+  dialog.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-    Controller.handleProjectCreation(formData);
+    const form = event.target;
+    const formData = new FormData(form);
 
-    projectForm.reset();
+    // Determine which action to take based on form state
+    if (form.dataset.deleteId) {
+      Controller.handleProjectDelete(form.dataset.deleteId);
+    } else if (form.dataset.editId) {
+      Controller.handleTodoSubmission(formData, form.dataset.editId);
+    } else if (form.querySelector('h2').textContent.includes('Task')) {
+      Controller.handleTodoSubmission(formData);
+    } else {
+      Controller.handleProjectCreation(formData);
+    }
   });
 
-  dialogs.forEach((dialog) => {
-    dialog.addEventListener('click', (event) => {
-      // Close if clicking the backdrop or a button with id 'cancel-button'
-      if (event.target === dialog || event.target.id === 'cancel-button') {
-        dialog.close();
-      }
+  // Close logic
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog || event.target.id === 'cancel-button') {
+      dialog.close();
+    }
+  });
+
+  // Project List Clicks
+  document
+    .querySelector('#projects-list')
+    .addEventListener('click', (event) => {
+      const projectButton = event.target.closest('.project-button');
+      const deleteButton = event.target.closest('.delete-project-button');
+
+      if (projectButton)
+        Controller.handleProjectSwitch(projectButton.dataset.id);
+      if (deleteButton)
+        Controller.requestDialog('Delete Confirmation', {
+          id: deleteButton.dataset.id,
+          target: 'Project',
+        });
     });
-  });
 
-  createProject.addEventListener('click', () => projectDialog.showModal());
+  // Todo List Clicks & Changes
+  document.querySelector('#todo-list').addEventListener('click', (event) => {
+    const todoCard = event.target.closest('.todo-card');
+    if (!todoCard) return; // Exit if we didn't click inside a card
 
-  projectsList.addEventListener('click', (event) => {
-    const projectButton = event.target.closest('.project-button');
+    const id = todoCard.dataset.id;
 
-    if (projectButton) {
-      Controller.handleProjectSwitch(projectButton.dataset.id);
-    }
-
-    const deleteButton = event.target.closest('.delete-project-button');
-
-    if (deleteButton) {
-      if (confirm('Are you sure you want to delete this project?')) {
-        Controller.handleProjectDelete(deleteButton.dataset.id);
-      }
-    }
-  });
-
-  todoList.addEventListener('change', (event) => {
-    const toggledTodo = event.target.closest('.todo-card');
-
-    if (toggledTodo) {
-      const todoId = toggledTodo.dataset.id;
-      Controller.handleTodoToggle(todoId);
-    }
-  });
-
-  todoList.addEventListener('click', (event) => {
-    const editButton = event.target.closest('.todo-edit');
-
-    if (editButton) {
-      Controller.handleEditTodo(editButton.closest('.todo-card').dataset.id);
+    // 1. Handle Edit Button
+    if (event.target.classList.contains('todo-edit')) {
+      Controller.handleEditRequest(id);
       return;
     }
 
-    const deleteButton = event.target.closest('.todo-delete');
+    // 2. Handle Delete Button
+    if (event.target.classList.contains('todo-delete')) {
+      Controller.handleTodoDelete(id);
+      return;
+    }
 
-    if (deleteButton) {
-      Controller.handleTodoDelete(
-        deleteButton.closest('.todo-card').dataset.id
-      );
+    // 3. Handle Checkbox Toggle
+    if (event.target.classList.contains('todo-complete')) {
+      Controller.handleTodoToggle(id);
     }
   });
 }

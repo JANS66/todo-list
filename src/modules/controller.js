@@ -1,20 +1,20 @@
 import * as DOM from './dom';
 import * as State from './state';
 
-export const handleTodoSubmission = (formData) => {
+export const handleTodoSubmission = (formData, editId = '') => {
   const data = Object.fromEntries(formData.entries());
 
   if (!data.title.trim()) {
-    alert('Task title is required!');
+    DOM.renderDialog('Alert', { message: 'Task title is required!' });
     return;
   }
-
-  const editId = document.querySelector('#task-form').dataset.editId;
 
   if (editId) {
     const existingTodo = State.getTodoById(editId);
     if (!existingTodo) {
-      console.error('Attempted to update a non-existent todo.');
+      DOM.renderDialog('Alert', {
+        message: 'Attempted to update a non-existent todo.',
+      });
       return;
     }
     State.updateTodo(editId, data);
@@ -22,27 +22,32 @@ export const handleTodoSubmission = (formData) => {
     State.createTodo(data);
   }
 
+  DOM.closeDialog();
   DOM.renderTodos(State.getCurrentProject());
 };
 
 export const handleProjectCreation = (formData) => {
   const data = Object.fromEntries(formData.entries());
-  const title = data.title.trim();
+  const name = data.name ? data.name.trim() : '';
 
-  if (!title) {
-    alert('Project name cannot be empty!');
+  if (!name) {
+    DOM.renderDialog('Alert', { message: 'Project name cannot be empty!' });
     return;
   }
 
   const duplicate = State.getProjects().some(
-    (project) => project.name.toLowerCase() === title.toLowerCase()
+    (project) => project.name.toLowerCase() === name.toLowerCase()
   );
+
   if (duplicate) {
-    alert('A project with this name already exists!');
+    DOM.renderDialog('Alert', {
+      message: 'A project with this name already exists!',
+    });
     return;
   }
 
   State.createProject(data);
+  DOM.closeDialog();
   DOM.renderProjects(State.getProjects());
 };
 
@@ -60,26 +65,24 @@ export const handleTodoToggle = (id) => {
   DOM.renderTodos(State.getCurrentProject());
 };
 
-export const handleEditTodo = (id) => {
-  const todo = State.getTodoById(id);
-
-  if (!todo) {
-    alert('This task no longer exists.');
-    return;
-  }
-
-  DOM.fillTaskForm(todo);
-
-  document.querySelector('#task-dialog').showModal();
+export const requestDialog = (type, data) => {
+  DOM.renderDialog(type, data);
 };
 
-export const handleProjectDelete = (id) => {
-  State.deleteProject(id);
-  DOM.renderProjects(State.getProjects());
-  DOM.renderTodos(State.getCurrentProject());
+export const handleEditRequest = (id) => {
+  const todo = State.getTodoById(id);
+  DOM.renderDialog('Task', todo);
 };
 
 export const handleTodoDelete = (id) => {
   State.deleteTodo(id);
+  DOM.renderTodos(State.getCurrentProject());
+};
+
+export const handleProjectDelete = (id) => {
+  State.deleteProject(id);
+
+  DOM.closeDialog();
+  DOM.renderProjects(State.getProjects());
   DOM.renderTodos(State.getCurrentProject());
 };
