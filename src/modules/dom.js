@@ -95,7 +95,7 @@ export const renderDialog = (type, data = null) => {
   const templateId = {
     Task: '#task-form-template',
     Project: '#project-form-template',
-    'Delete Confirmation': '#delete-conf-template',
+    'Delete Confirmation': '#delete-confirmation-template',
     Alert: null,
   }[type];
 
