@@ -1,118 +1,98 @@
 import * as Controller from './controller';
 
 export function setupEventListeners() {
-  const dialog = document.querySelector('#main-dialog');
-  const sidebar = document.querySelector('sidebar');
-  const menuToggle = document.querySelector('#menu-toggle');
+  const uiElements = {
+    dialog: document.querySelector('#main-dialog'),
+    sidebar: document.querySelector('sidebar'),
+    menuToggle: document.querySelector('#menu-toggle'),
+    projectsList: document.querySelector('#projects-list'),
+    todoList: document.querySelector('#todo-list'),
+    appBody: document.body,
+  };
 
-  // Toggle Sidebar
-  menuToggle?.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-  });
+  // --- 1. Global / Navigation Actions ---
+  uiElements.appBody.addEventListener('click', (e) => {
+    const target = e.target;
 
-  // Close sidebar when clicking outside of it
-  document.addEventListener('click', (event) => {
+    // Toggle Sidebar
+    if (target.closest('#menu-toggle')) {
+      uiElements.sidebar.classList.toggle('active');
+    }
+
+    // Close sidebar when clicking outside
     if (
-      sidebar.classList.contains('active') &&
-      !sidebar.contains(event.target) &&
-      event.target !== menuToggle
+      uiElements.sidebar.classList.contains('active') &&
+      !uiElements.sidebar.contains(target) &&
+      !target.closest('#menu-toggle')
     ) {
-      sidebar.classList.remove('active');
+      uiElements.sidebar.classList.remove('active');
+    }
+
+    // Creator Buttons
+    if (target.closest('#create-project')) Controller.requestDialog('Project');
+    if (target.closest('#add-todo')) Controller.requestDialog('Task');
+  });
+
+  // --- 2. Dialog Management ---
+  uiElements.dialog.addEventListener('click', (e) => {
+    if (e.target === uiElements.dialog || e.target.id === 'cancel-button') {
+      uiElements.dialog.close();
     }
   });
 
-  // Open Project Creator
-  document.querySelector('#create-project').addEventListener('click', () => {
-    Controller.requestDialog('Project');
-  });
-
-  // Open Task Creator
-  document.querySelector('#add-todo').addEventListener('click', () => {
-    Controller.requestDialog('Task');
-  });
-
-  // Handle Form Submissions (Delegation)
-  dialog.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const form = event.target;
+  uiElements.dialog.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
     const formData = new FormData(form);
+    const { deleteId, editId, createId } = form.dataset;
 
-    // Determine which action to take based on form state
-    if (form.dataset.deleteId) {
-      Controller.handleProjectDelete(form.dataset.deleteId);
-    } else if (form.dataset.editId) {
-      Controller.handleTodoSubmission(formData, form.dataset.editId);
-    } else if (form.dataset.createId) {
-      Controller.handleTodoSubmission(formData);
-    } else {
-      Controller.handleProjectCreation(formData);
+    if (deleteId) return Controller.handleProjectDelete(deleteId);
+    if (editId) return Controller.handleTodoSubmission(formData, editId);
+    if (createId) return Controller.handleTodoSubmission(formData);
+
+    Controller.handleProjectCreation(formData);
+  });
+
+  // --- 3. Project List (Delegation) ---
+  uiElements.projectsList.addEventListener('click', (e) => {
+    const projectBtn = e.target.closest('.project-button');
+    const deleteBtn = e.target.closest('.delete-project-button');
+
+    if (projectBtn) {
+      Controller.handleProjectSwitch(projectBtn.dataset.id);
+      uiElements.sidebar.classList.remove('active');
+    } else if (deleteBtn) {
+      Controller.requestDialog('Delete Confirmation', {
+        id: deleteBtn.dataset.id,
+        target: 'Project',
+      });
     }
   });
 
-  // Close logic
-  dialog.addEventListener('click', (event) => {
-    if (event.target === dialog || event.target.id === 'cancel-button') {
-      dialog.close();
-    }
-  });
-
-  // Project List Clicks
-  document
-    .querySelector('#projects-list')
-    .addEventListener('click', (event) => {
-      const projectButton = event.target.closest('.project-button');
-      if (projectButton) {
-        Controller.handleProjectSwitch(projectButton.dataset.id);
-
-        sidebar.classList.remove('active');
-      }
-
-      const deleteButton = event.target.closest('.delete-project-button');
-      if (deleteButton)
-        Controller.requestDialog('Delete Confirmation', {
-          id: deleteButton.dataset.id,
-          target: 'Project',
-        });
-    });
-
-  // Todo List Clicks & Changes
-  document.querySelector('#todo-list').addEventListener('click', (event) => {
-    const todoCard = event.target.closest('.todo-card');
-    if (!todoCard) return; // Exit if we didn't click inside a card
+  // --- 4. Todo List (Delegation) ---
+  uiElements.todoList.addEventListener('click', (e) => {
+    const target = e.target;
+    const todoCard = target.closest('.todo-card');
+    if (!todoCard) return;
 
     const id = todoCard.dataset.id;
-    const target = event.target;
 
-    // 1. Handle Edit Button
-    if (target.classList.contains('todo-edit')) {
-      Controller.handleEditRequest(id);
-      return;
-    }
+    if (target.classList.contains('todo-edit'))
+      return Controller.handleEditRequest(id);
+    if (target.classList.contains('todo-delete'))
+      return Controller.handleTodoDelete(id);
+    if (target.classList.contains('todo-complete'))
+      return Controller.handleTodoToggle(id);
 
-    // 2. Handle Delete Button
-    if (target.classList.contains('todo-delete')) {
-      Controller.handleTodoDelete(id);
-      return;
-    }
-
-    // 3. Handle Checkbox Toggle
-    if (target.classList.contains('todo-complete')) {
-      Controller.handleTodoToggle(id);
-      return;
-    }
-
-    // 4. Handle Expansion (If we clicked the card but NOT a button/checkbox)
-    const isInteractive =
-      target.closest('.todo-actions') ||
-      target.classList.contains('todo-complete');
-
-    if (!isInteractive) {
-      todoCard.classList.toggle('expanded');
-
-      // Update the arrow icon
-      const icon = todoCard.querySelector('.expand-icon');
-      icon.textContent = todoCard.classList.contains('expanded') ? '▲' : '▼';
+    // Default action: Expansion
+    if (!target.closest('.todo-actions')) {
+      handleCardExpansion(todoCard);
     }
   });
+}
+
+function handleCardExpansion(card) {
+  card.classList.toggle('expanded');
+  const icon = card.querySelector('.expand-icon');
+  if (icon) icon.textContent = card.classList.contains('expanded') ? '▲' : '▼';
 }

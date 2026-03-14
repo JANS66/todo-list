@@ -3,6 +3,16 @@ import * as State from './state';
 
 export const handleTodoSubmission = (formData, editId = '') => {
   const data = Object.fromEntries(formData.entries());
+  const selectedDate = new Date(data.dueDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset time to compare only the calendar date
+
+  if (selectedDate < today) {
+    DOM.renderDialog('Alert', {
+      message: 'You cannot pick a date in the past!',
+    });
+    return;
+  }
 
   if (!data.title.trim()) {
     DOM.renderDialog('Alert', { message: 'Task title is required!' });
