@@ -17,6 +17,7 @@ export const renderProjects = (projects, currentId) => {
     projectButton.classList.add('project-button');
     deleteButton.textContent = 'x';
     deleteButton.classList.add('delete-project-button');
+    deleteButton.setAttribute('aria-label', `Delete ${project.name} project`);
 
     projectButton.dataset.id = project.id;
     deleteButton.dataset.id = project.id;
@@ -80,9 +81,8 @@ export const renderDialog = (type, data = null) => {
     }
   } else if (type === 'Delete Confirmation') {
     form.dataset.deleteId = data.id;
-    const identifier = data.title || data.name || '';
     form.querySelector('.delete-message').textContent =
-      `Delete ${identifier} ${data.target}?`;
+      `Delete ${data.target}?`;
   }
 
   // 4. Add Buttons (Footer is the same for all except Alert)

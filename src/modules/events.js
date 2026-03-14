@@ -63,16 +63,16 @@ export function setupEventListeners() {
   });
 
   // --- 3. Project List (Delegation) ---
-  uiElements.projectsList.addEventListener('click', (e) => {
-    const projectBtn = e.target.closest('.project-button');
-    const deleteBtn = e.target.closest('.delete-project-button');
+  uiElements.projectsList.addEventListener('click', (event) => {
+    const projectButton = event.target.closest('.project-button');
+    const deleteButton = event.target.closest('.delete-project-button');
 
-    if (projectBtn) {
-      Controller.handleProjectSwitch(projectBtn.dataset.id);
+    if (projectButton) {
+      Controller.handleProjectSwitch(projectButton.dataset.id);
       uiElements.sidebar.classList.remove('active');
-    } else if (deleteBtn) {
+    } else if (deleteButton) {
       Controller.requestDialog('Delete Confirmation', {
-        id: deleteBtn.dataset.id,
+        id: deleteButton.dataset.id,
         target: 'Project',
       });
     }
