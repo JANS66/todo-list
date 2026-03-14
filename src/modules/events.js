@@ -34,8 +34,17 @@ export function setupEventListeners() {
   });
 
   // --- 2. Dialog Management ---
-  uiElements.dialog.addEventListener('click', (e) => {
-    if (e.target === uiElements.dialog || e.target.id === 'cancel-button') {
+  uiElements.dialog.addEventListener('click', (event) => {
+    const dialogDimensions = uiElements.dialog.getBoundingClientRect();
+
+    // Check if the click was outside the dialog boundaries
+    const isOutside =
+      event.clientX < dialogDimensions.left ||
+      event.clientX > dialogDimensions.right ||
+      event.clientY < dialogDimensions.top ||
+      event.clientY > dialogDimensions.bottom;
+
+    if (isOutside || event.target.id === 'cancel-button') {
       uiElements.dialog.close();
     }
   });
