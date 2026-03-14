@@ -49,9 +49,9 @@ export function setupEventListeners() {
     }
   });
 
-  uiElements.dialog.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = e.target;
+  uiElements.dialog.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const form = event.target;
     const formData = new FormData(form);
     const { deleteId, editId, createId } = form.dataset;
 

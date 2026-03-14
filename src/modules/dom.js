@@ -1,43 +1,5 @@
 import { format, parseISO, isValid } from 'date-fns';
 
-// Helper to create a standard label/input pair safely
-const createField = (labelTitle, type, name, value = '') => {
-  const label = document.createElement('label');
-  label.textContent = labelTitle;
-  const input = document.createElement(
-    type === 'textarea' ? 'textarea' : 'input'
-  );
-  if (type !== 'textarea') input.type = type;
-  input.name = name;
-  input.value = value;
-  label.appendChild(input);
-  return label;
-};
-
-const createSelectField = (
-  labelTitle,
-  name,
-  options,
-  currentValue = 'Medium'
-) => {
-  const label = document.createElement('label');
-  label.textContent = labelTitle;
-
-  const select = document.createElement('select');
-  select.name = name;
-
-  options.forEach((opt) => {
-    const option = document.createElement('option');
-    option.value = opt;
-    option.textContent = opt;
-    if (opt === currentValue) option.selected = true;
-    select.appendChild(option);
-  });
-
-  label.appendChild(select);
-  return label;
-};
-
 export const renderProjects = (projects, currentId) => {
   const projectsList = document.querySelector('#projects-list');
   projectsList.innerHTML = '';
@@ -118,8 +80,9 @@ export const renderDialog = (type, data = null) => {
     }
   } else if (type === 'Delete Confirmation') {
     form.dataset.deleteId = data.id;
+    const identifier = data.title || data.name || '';
     form.querySelector('.delete-message').textContent =
-      `Delete ${data.title} ${data.target}?`;
+      `Delete ${identifier} ${data.target}?`;
   }
 
   // 4. Add Buttons (Footer is the same for all except Alert)
