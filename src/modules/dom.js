@@ -1,3 +1,5 @@
+import { format, parseISO, isValid } from 'date-fns';
+
 // Helper to create a standard label/input pair safely
 const createField = (labelTitle, type, name, value = '') => {
   const label = document.createElement('label');
@@ -75,11 +77,19 @@ export const renderTodos = (project) => {
     li.classList.add('todo-card');
     li.dataset.id = todo.id;
 
+    let displayDate = 'No date';
+    if (todo.dueDate) {
+      const date = parseISO(todo.dueDate);
+      if (isValid(date)) {
+        displayDate = format(date, 'MMM do');
+      }
+    }
+
     li.innerHTML = `
       <div class="todo-header">
         <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
         <span class="todo-title"></span>
-        <span class="todo-dueDate">${todo.dueDate}</span>
+        <span class="todo-dueDate">${displayDate}</span>
         <span class="expand-icon">▼</span>
       </div>
       <div class="todo-details">
