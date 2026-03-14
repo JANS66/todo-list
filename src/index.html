@@ -27,5 +27,53 @@
     <dialog id="main-dialog">
       <div id="dialog-content"></div>
     </dialog>
+
+    <template id="todo-card-template">
+      <li class="todo-card">
+        <div class="todo-header">
+          <input class="todo-complete" type="checkbox" />
+          <span class="todo-title"></span>
+          <span class="todo-dueDate"></span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="todo-details">
+          <div class="details-grid">
+            <div class="description-section">
+              <p class="todo-priority-badge"></p>
+              <p class="todo-description"></p>
+            </div>
+            <div class="todo-actions">
+              <button class="todo-edit">Edit</button>
+              <button class="todo-delete">Delete</button>
+            </div>
+          </div>
+        </div>
+      </li>
+    </template>
+
+    <template id="task-form-template">
+      <h2></h2>
+      <label>Title <input type="text" name="title" required /></label>
+      <label>Description <textarea name="description"></textarea></label>
+      <label>Due Date <input type="date" name="dueDate" /></label>
+      <label
+        >Priority
+        <select name="priority">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+      </label>
+    </template>
+
+    <template id="project-form-template">
+      <h2>New Project</h2>
+      <label>Project Name <input type="text" name="name" required /></label>
+    </template>
+
+    <template id="delete-confirmation-template">
+      <h2>Are you sure?</h2>
+      <p class="delete-message"></p>
+    </template>
   </body>
 </html>

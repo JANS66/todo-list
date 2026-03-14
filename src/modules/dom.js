@@ -67,112 +67,68 @@ export const renderProjects = (projects, currentId) => {
 
 export const renderTodos = (project) => {
   const projectName = document.querySelector('#project-name');
-  projectName.textContent = project.name;
-
   const todoList = document.querySelector('#todo-list');
+
+  projectName.textContent = project.name;
   todoList.innerHTML = '';
 
+  // Use document fragment for better performance when appending many items
+  const fragment = document.createDocumentFragment();
+
   project.todos.forEach((todo) => {
-    const li = document.createElement('li');
-    li.classList.add('todo-card');
-    li.dataset.id = todo.id;
-
-    let displayDate = 'No date';
-    if (todo.dueDate) {
-      const date = parseISO(todo.dueDate);
-      if (isValid(date)) {
-        displayDate = format(date, 'MMM do');
-      }
-    }
-
-    li.innerHTML = `
-      <div class="todo-header">
-        <input class="todo-complete" type="checkbox" ${todo.complete ? 'checked' : ''}>
-        <span class="todo-title"></span>
-        <span class="todo-dueDate">${displayDate}</span>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="todo-details">
-        <div class="details-grid">
-          <div class="description-section">
-            <p class="todo-priority-badge ${todo.priority.toLowerCase()}">${todo.priority}</p>
-            <p class="todo-description"></p>
-          </div>
-          <div class="todo-actions">
-            <button class="todo-edit">Edit</button>
-            <button class="todo-delete">Delete</button>
-          </div>
-    `;
-
-    li.querySelector('.todo-title').textContent = todo.title;
-    li.querySelector('.todo-description').textContent =
-      todo.description || 'No description provided.';
-
-    todoList.appendChild(li);
+    fragment.appendChild(createTodoElement(todo));
   });
+
+  todoList.appendChild(fragment);
 };
 
 export const renderDialog = (type, data = null) => {
-  const container = document.querySelector('#dialog-content');
   const dialog = document.querySelector('#main-dialog');
-  container.innerHTML = '';
+  const container = document.querySelector('#dialog-content');
+  container.innerHTML = ''; // Clear old content
 
+  // 1. Create the Form Wrapper
   const form = document.createElement('form');
   form.id = 'dynamic-form';
 
-  const title = document.createElement('h2');
-  title.textContent =
-    type === 'Alert' ? 'Notice' : data ? `Edit ${type}` : `New ${type}`;
-  form.appendChild(title);
+  // 2. Select and CLone the correct Template
+  const templateId = {
+    Task: '#task-form-template',
+    Project: '#project-form-template',
+    'Delete Confirmation': '#delete-conf-template',
+    Alert: null,
+  }[type];
 
-  if (type === 'Alert') {
-    const message = document.createElement('p');
-    message.textContent = data.message;
-    form.appendChild(message);
-
-    const okButton = document.createElement('button');
-    okButton.type = 'button';
-    okButton.textContent = 'OK';
-    okButton.addEventListener('click', () => dialog.close());
-    form.appendChild(okButton);
-  } else if (type === 'Task') {
-    form.appendChild(createField('Title', 'text', 'title', data?.title));
-    form.appendChild(
-      createField('Description', 'textarea', 'description', data?.description)
-    );
-    form.appendChild(createField('Due Date', 'date', 'dueDate', data?.dueDate));
-    form.appendChild(
-      createSelectField(
-        'Priority',
-        'priority',
-        ['Low', 'Medium', 'High'],
-        data?.priority
-      )
-    );
-
-    data ? (form.dataset.editId = data.id) : (form.dataset.createId = true);
-
-    if (data) form.dataset.editId = data.id;
-  } else if (type === 'Project') {
-    form.appendChild(createField('Project Name', 'text', 'name', data?.name));
-  } else if (type === 'Delete Confirmation') {
-    title.textContent = 'Are you sure?';
-    const message = document.createElement('p');
-    message.textContent = `Delete this ${data.target}?`;
-    form.appendChild(message);
-    form.dataset.deleteId = data.id;
+  if (templateId) {
+    const template = document.querySelector(templateId);
+    form.appendChild(template.content.cloneNode(true));
   }
 
+  // 3. Populate Data
+  if (type == 'Task') {
+    form.querySelector('h2').textContent = data ? 'Edit Task' : 'New Task';
+    if (data) {
+      form.dataset.editId = data.id;
+      form.elements.title.value = data.title;
+      form.elements.description.value = data.description;
+      form.elements.dueDate.value = data.dueDate;
+      form.elements.priority.value = data.priority;
+    } else {
+      form.dataset.createId = 'true';
+    }
+  } else if (type === 'Delete Confirmation') {
+    form.dataset.deleteId = data.id;
+    form.querySelector('.delete-message').textContent =
+      `Delete ${data.title} ${data.target}?`;
+  }
+
+  // 4. Add Buttons (Footer is the same for all except Alert)
   if (type !== 'Alert') {
     const actions = document.createElement('div');
-    const submitButton = document.createElement('button');
-    submitButton.textContent = 'Confirm';
-    const cancelButton = document.createElement('button');
-    cancelButton.type = 'button';
-    cancelButton.id = 'cancel-button';
-    cancelButton.textContent = 'Cancel';
-
-    actions.append(submitButton, cancelButton);
+    actions.innerHTML = `
+      <button type="submit">Confirm</button>
+      <button type="button" id="cancel-button">Cancel</button>
+    `;
     form.appendChild(actions);
   }
 
@@ -182,4 +138,37 @@ export const renderDialog = (type, data = null) => {
 
 export const closeDialog = () => {
   document.querySelector('#main-dialog').close();
+};
+
+const getFormattedDate = (dateString) => {
+  if (!dateString) return 'No date';
+  const date = parseISO(dateString);
+  return isValid(date) ? format(date, 'MMM do') : 'Invalid date';
+};
+
+const createTodoElement = (todo) => {
+  const template = document.querySelector('#todo-card-template');
+  const clone = template.content.cloneNode(true);
+
+  const li = clone.querySelector('.todo-card');
+  li.dataset.id = todo.id;
+
+  // 1. Handle Header
+  const checkbox = li.querySelector('.todo-complete');
+  checkbox.checked = todo.complete;
+
+  li.querySelector('.todo-title').textContent = todo.title;
+  li.querySelector('.todo-dueDate').textContent = getFormattedDate(
+    todo.dueDate
+  );
+
+  // 2. Handle Details
+  const badge = li.querySelector('.todo-priority-badge');
+  badge.textContent = todo.priority;
+  badge.classList.add(todo.priority.toLowerCase());
+
+  li.querySelector('.todo-description').textContent =
+    todo.description || 'No description provided.';
+
+  return li;
 };
