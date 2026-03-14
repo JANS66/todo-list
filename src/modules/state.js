@@ -4,6 +4,14 @@ import * as Storage from './storage';
 
 let projects = [];
 let currentProject = null;
+const listeners = [];
+
+export const subscribe = (callback) => listeners.push(callback);
+
+const notify = () => {
+  Storage.saveToLocalStorage(projects);
+  listeners.forEach((callback) => callback(projects, currentProject));
+};
 
 export const initApp = () => {
   const savedData = Storage.loadFromLocalStorage();
@@ -11,23 +19,26 @@ export const initApp = () => {
   if (savedData && savedData.length > 0) {
     projects = savedData;
     currentProject = projects[0];
+    notify();
   } else {
     const defaultProject = new Project('General');
     projects.push(defaultProject);
     currentProject = defaultProject;
-    Storage.saveToLocalStorage(projects);
+    notify();
   }
 };
 
 export const getCurrentProject = () => currentProject;
 export const getProjects = () => projects;
-export const switchProject = (projectId) =>
-  (currentProject = projects.find((project) => project.id === projectId));
+export const switchProject = (projectId) => {
+  currentProject = projects.find((project) => project.id === projectId);
+  notify();
+};
 
 export const toggleTodo = (todoId) => {
   const todo = currentProject.todos.find((todo) => todo.id === todoId);
   todo.toggleComplete();
-  Storage.saveToLocalStorage(projects);
+  notify();
 };
 
 export const getTodoById = (todoId) =>
@@ -36,7 +47,7 @@ export const getTodoById = (todoId) =>
 export const updateTodo = (todoId, newData) => {
   const todo = getTodoById(todoId);
   Object.assign(todo, newData);
-  Storage.saveToLocalStorage(projects);
+  notify();
 };
 
 export const createTodo = (data) => {
@@ -47,13 +58,13 @@ export const createTodo = (data) => {
     data.priority
   );
   currentProject.addTodo(newTodo);
-  Storage.saveToLocalStorage(projects);
+  notify();
 };
 
 export const createProject = (data) => {
   const newProject = new Project(data.name);
   projects.push(newProject);
-  Storage.saveToLocalStorage(projects);
+  notify();
 };
 
 export const deleteProject = (projectId) => {
@@ -67,7 +78,7 @@ export const deleteProject = (projectId) => {
       currentProject = projects[index === 0 ? 1 : 0];
     }
     projects.splice(index, 1);
-    Storage.saveToLocalStorage(projects);
+    notify();
     return true;
   }
   return false;
@@ -77,5 +88,5 @@ export const deleteTodo = (todoId) => {
   currentProject.todos = currentProject.todos.filter(
     (todo) => todo.id !== todoId
   );
-  Storage.saveToLocalStorage(projects);
+  notify();
 };

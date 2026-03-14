@@ -33,7 +33,6 @@ export const handleTodoSubmission = (formData, editId = '') => {
   }
 
   DOM.closeDialog();
-  DOM.renderTodos(State.getCurrentProject());
 };
 
 export const handleProjectCreation = (formData) => {
@@ -58,22 +57,18 @@ export const handleProjectCreation = (formData) => {
 
   State.createProject(data);
   DOM.closeDialog();
-  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
 };
 
 export const handleProjectSwitch = (id) => {
   if (!id) return;
 
   State.switchProject(id);
-  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
-  DOM.renderTodos(State.getCurrentProject());
 };
 
 export const handleTodoToggle = (id) => {
   if (!id) return;
 
   State.toggleTodo(id);
-  DOM.renderTodos(State.getCurrentProject());
 };
 
 export const requestDialog = (type, data) => {
@@ -87,7 +82,6 @@ export const handleEditRequest = (id) => {
 
 export const handleTodoDelete = (id) => {
   State.deleteTodo(id);
-  DOM.renderTodos(State.getCurrentProject());
 };
 
 export const handleProjectDelete = (id) => {
@@ -104,6 +98,4 @@ export const handleProjectDelete = (id) => {
 
   // If successful, proceed as normal
   DOM.closeDialog();
-  DOM.renderProjects(State.getProjects(), State.getCurrentProject().id);
-  DOM.renderTodos(State.getCurrentProject());
 };
