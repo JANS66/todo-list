@@ -105,7 +105,7 @@ export const renderDialog = (type, data = null) => {
   }
 
   // 3. Populate Data
-  if (type == 'Task') {
+  if (type === 'Task') {
     form.querySelector('h2').textContent = data ? 'Edit Task' : 'New Task';
     if (data) {
       form.dataset.editId = data.id;
