@@ -11,8 +11,8 @@ export function setupEventListeners() {
   };
 
   // --- 1. Global / Navigation Actions ---
-  uiElements.appBody.addEventListener('click', (e) => {
-    const target = e.target;
+  uiElements.appBody.addEventListener('click', (event) => {
+    const target = event.target;
 
     // Toggle Sidebar
     if (target.closest('#menu-toggle')) {
@@ -79,8 +79,8 @@ export function setupEventListeners() {
   });
 
   // --- 4. Todo List (Delegation) ---
-  uiElements.todoList.addEventListener('click', (e) => {
-    const target = e.target;
+  uiElements.todoList.addEventListener('click', (event) => {
+    const target = event.target;
     const todoCard = target.closest('.todo-card');
     if (!todoCard) return;
 
