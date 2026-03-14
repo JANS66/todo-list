@@ -139,6 +139,9 @@ export const renderDialog = (type, data = null) => {
         data?.priority
       )
     );
+
+    data ? (form.dataset.editId = data.id) : (form.dataset.createId = true);
+
     if (data) form.dataset.editId = data.id;
   } else if (type === 'Project') {
     form.appendChild(createField('Project Name', 'text', 'name', data?.name));

@@ -11,11 +11,11 @@ export function setupEventListeners() {
   });
 
   // Close sidebar when clicking outside of it
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', (event) => {
     if (
       sidebar.classList.contains('active') &&
-      !sidebar.contains(e.target) &&
-      e.target !== menuToggle
+      !sidebar.contains(event.target) &&
+      event.target !== menuToggle
     ) {
       sidebar.classList.remove('active');
     }
@@ -43,7 +43,7 @@ export function setupEventListeners() {
       Controller.handleProjectDelete(form.dataset.deleteId);
     } else if (form.dataset.editId) {
       Controller.handleTodoSubmission(formData, form.dataset.editId);
-    } else if (form.querySelector('h2').textContent.includes('Task')) {
+    } else if (form.dataset.createId) {
       Controller.handleTodoSubmission(formData);
     } else {
       Controller.handleProjectCreation(formData);
