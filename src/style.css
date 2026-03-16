@@ -8,6 +8,7 @@
   --danger: #ef4444;
   --border: #e2e8f0;
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --sidebar-width: 260px;
 }
 
 *,
@@ -51,6 +52,7 @@ body {
 
 /* Sidebar Styling */
 sidebar {
+  width: var(--sidebar-width);
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   padding: 1.5rem 0.75rem;
@@ -460,8 +462,9 @@ button:focus-visible {
   }
 
   sidebar {
+    width: var(--sidebar-width);
     position: fixed;
-    left: -260px; /* Hide it off-screen to the left */
+    left: calc(var(--sidebar-width) * -1); /* Hide it off-screen to the left */
     top: 0;
     bottom: 0;
     width: 260px;
