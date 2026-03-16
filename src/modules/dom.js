@@ -54,7 +54,7 @@ export const renderDialog = (type, data = null) => {
   const form = document.createElement('form');
   form.id = 'dynamic-form';
 
-  // 2. Select and CLone the correct Template
+  // 2. Select and clone the correct template
   const templateId = {
     Task: '#task-form-template',
     Project: '#project-form-template',
@@ -65,6 +65,13 @@ export const renderDialog = (type, data = null) => {
   if (templateId) {
     const template = document.querySelector(templateId);
     form.appendChild(template.content.cloneNode(true));
+  } else if (type === 'Alert') {
+    const title = document.createElement('h2');
+    title.textContent = 'Attention';
+    const message = document.createElement('p');
+    message.textContent = data.message;
+    form.appendChild(title);
+    form.appendChild(message);
   }
 
   // 3. Populate Data
@@ -85,15 +92,16 @@ export const renderDialog = (type, data = null) => {
       `Delete ${data.target}?`;
   }
 
-  // 4. Add Buttons (Footer is the same for all except Alert)
-  if (type !== 'Alert') {
-    const actions = document.createElement('div');
+  const actions = document.createElement('div');
+  if (type === 'Alert') {
+    actions.innerHTML = `<button type="button" id="cancel-button">OK</button>`;
+  } else {
     actions.innerHTML = `
       <button type="submit">Confirm</button>
       <button type="button" id="cancel-button">Cancel</button>
     `;
-    form.appendChild(actions);
   }
+  form.appendChild(actions);
 
   container.appendChild(form);
   dialog.showModal();
